@@ -25,7 +25,7 @@ app.get("/api/users", (req,res)=>{
 app.get("/api/users/:id", (req,res)=>{
     // To return an details of the user with user ID, all arrays in node use find function 
     const user=users.find( u => u.id === parseInt(req.params.id));
-    if (!user) res.status(404).send("User with the given ID is not found");
+    if (!user) return res.status(404).send("User with the given ID is not found");
     res.send(user)
 });
 
@@ -35,20 +35,26 @@ app.post("/api/users", (req,res)=>{
     // };
     // const result= Joi.validate(req.body, schema)
     // console.log(result.error);
-    const result=validatation(req.body);    
-    if(result.error){
-        return res.status(400).send(result.error.details[0].message);
-    }
     // if(!req.body.name || req.body.name.length<3){
     //     return res.status(400).send("Invalid name");
     // }
+    
+    // validation using function and Joi
+    const result=validatation(req.body);    
+    if(result.error)    return res.status(400).send(result.error.details[0].message);
+    
+
+    // Creating new user
     const user={
         id: users.length+1,
         name: req.body.name // we use express.json() conversion here
     };
+
     users.push(user);
     res.send(user);
 });
+
+
 // app.get("/api/user/:id/:name", (req,res)=>{
 //     // res.send(req.params)
 //     res.send(req.query)
@@ -63,28 +69,27 @@ app.put('/api/users/:id', (req,res) =>{
 
     // valid input
     const result=validatation(req.body);    
-    if(result.error){
-        return res.status(400).send(result.error.details[0].message);
-    }
-    // const result= validatation(req.body);
-    // if(result.error) return res.status(400).send(result.error.details[0].message);
-
+    if(result.error)    return res.status(400).send(result.error.details[0].message);
+    
     // update
     user.name=req.body.name;
     res.send(user);
 });
 
 app.delete("/api/users/:id", (req,res)=>{
+    // Check for id
     const user = users.find(u => u.id === parseInt(req.params.id));
     if (!user) return res.staus(404).send("User Not Found");
     
+    // initialize index
     const index= users.indexOf(user);
 
+    // remove the object
     users.splice(index,1) // delete the user
     return res.send(user);
 });
 
-
+// Validation done usinig Joi
 function validatation(user){
     const schema={
         name: Joi.string().min(3).required()
