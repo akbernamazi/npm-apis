@@ -1,0 +1,23 @@
+{
+  "name": "node-api",
+  "version": "1.0.0",
+  "description": "Working with APIs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akbernamazi/npm-apis.git"
+  },
+  "author": "akbernamazi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/akbernamazi/npm-apis/issues"
+  },
+  "homepage": "https://github.com/akbernamazi/npm-apis#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "joi": "^13.1.0"
+  }
+}
