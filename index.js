@@ -79,7 +79,7 @@ app.put('/api/users/:id', (req,res) =>{
 app.delete("/api/users/:id", (req,res)=>{
     // Check for id
     const user = users.find(u => u.id === parseInt(req.params.id));
-    if (!user) return res.staus(404).send("User Not Found");
+    if (!user) return res.status(404).send("User Not Found");
     
     // initialize index
     const index= users.indexOf(user);
