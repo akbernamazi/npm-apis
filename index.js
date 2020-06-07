@@ -1,4 +1,5 @@
-const express=require('express')
+const express=require('express');
+const mysql=require('mysql');
 const app=express();
 
 // To use external module for validating the input 
@@ -7,26 +8,59 @@ const Joi=require('joi');
 // We need to enable JSON object in the body of the req, by default this feature is not enabled [used in .post() to get the data from the page]
 app.use(express.json()); // express.json() returns the middleware We call app.use to use that middleware in request processiong pipeline
 
-const users=[
-    {id: 1, name: 'Nia'},
-    {id: 2, name: 'Nitish'},
-    {id: 3, name: 'Vineeth'}
-];
+// const users=[
+//     {id: 1, name: 'Nia'},
+//     {id: 2, name: 'Nitish'},
+//     {id: 3, name: 'Vineeth'}
+// ];
 
+// Create connection
+var connection= mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'testing'
+});
+
+connection.connect(function(error){
+    if(error)   console.log("Error");
+    else    console.log("Connected");
+});
 
 app.get("/", (req, res) => {
     res.send("Hello World");
 });
 
 app.get("/api/users", (req,res)=>{
-    res.send(users);
+    connection.query("Select * from test", function(error,result){
+        if(error){   
+            console.log("Error");
+            return res.send("Error");
+        }
+        else{    
+            console.log("Connected to db");
+            console.log(result);
+            // res.send("Hello ,"+rows[0].Name);
+            return res.json(result);
+        }
+    });
 });
 
 app.get("/api/users/:id", (req,res)=>{
     // To return an details of the user with user ID, all arrays in node use find function 
-    const user=users.find( u => u.id === parseInt(req.params.id));
-    if (!user) return res.status(404).send("User with the given ID is not found");
-    res.send(user)
+    // const user=users.find( u => u.id === parseInt(req.params.id));
+    // if (!user) return res.status(404).send("User with the given ID is not found");
+    const u_id = parseInt(req.params.id);
+    connection.query("Select * from test where id=?",u_id,(error,result)=>{
+        if(error || !result){
+            console.log("Error: "+error);
+            res.send("Error");
+        }
+        else{
+            res.json(result);
+        }
+    });
+    // res.send(user)
 });
 
 app.post("/api/users", (req,res)=>{
@@ -97,12 +131,9 @@ function validatation(user){
     return Joi.validate(user, schema);
 }
 
-
-
-
-
-
-
+function check_user(u_id){
+    connection.query("select * from test where id=?",user,result);
+}
 
 
 // We use global constant called process to assign the port intially available for out machine, if not available we can set using command called $set variable_name= <port.number>
